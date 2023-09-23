@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cstdint>
+#include <cmath>
 #include <string>
 #include <fstream>
+#include <memory>
 
 #include <gtest/gtest.h>
 
-
+#include "Methods.hpp"
 /*
 class Test_Ast : public ::testing::Test
 {
@@ -50,8 +52,26 @@ TEST_F(Test_Ast, TestFile3)
    EXPECT_EQ(res, etalonRes);
 }*/
 
+static
+double
+InMathFunc(double x)
+{
+   return x * sin(x) + 2 * cos(x);
+}
+
+constexpr double eps = 0.001;
+
 int32_t main(int32_t argc, char** argv)
 {
+   
+   BruteForce bruteSolver(InMathFunc, {-6, -4}, eps);
+   Dichotomy dichotomySolver(InMathFunc, {-6, -4}, eps);
+   GoldenSection goldenSectionSolver(InMathFunc, {-6, -4}, eps);
+   BitwiseSearch bs(InMathFunc, {-6, -4}, eps);
+   std::cout << "Brute:" << bruteSolver.GetMin() << std::endl;
+   std::cout << "Dich:" << dichotomySolver.GetMin() << std::endl;
+   std::cout << "GoldenSec:" << goldenSectionSolver.GetMin() << std::endl;
+   std::cout << "bitwise:" << bs.GetMin() << std::endl;
    //::testing::InitGoogleTest(&argc, argv);
    //return RUN_ALL_TESTS();
    return 0;
