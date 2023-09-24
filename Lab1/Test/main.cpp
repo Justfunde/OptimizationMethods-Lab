@@ -44,16 +44,16 @@ TEST(MinFunctionCalcTest_GoldenSec, GoldenSecMethod)
    EXPECT_NEAR(etalonMin, yMin, eps);
 }
 
-TEST(MinFunctionCalcTest_GoldenSecBin, GoldenSecBinMethod)
+TEST(MinFunctionCalcTest_Bitwise, BitwiseMethod)
 {
-   GoldenSectionBinary solver(InMathFunc, {-6, -4}, eps);
+   Bitwise solver(InMathFunc, {-6, -4}, eps);
    const auto yMin = solver.GetMin();
 
    EXPECT_NEAR(etalonMin, yMin, eps);
 }
-
 int32_t main(int32_t argc, char** argv)
 {
+
    ::testing::InitGoogleTest(&argc, argv);
    return RUN_ALL_TESTS();
 }

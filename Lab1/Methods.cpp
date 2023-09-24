@@ -133,44 +133,40 @@ GoldenSection::GetMin() const
 }
 
 double
-GoldenSectionBinary::GetMin() const
+Bitwise::GetMin() const
 {
-   static const double fi = (static_cast<double>(1) + sqrt(5)) / static_cast<double>(2);
-   double right(xDiap.second), left(xDiap.first);
-   double resphi = 2 - fi;
-   double x_1 = left + resphi * (right - left);
-   double x_2 = right - resphi * (right - left);
-   double y_1 = mathFunction(x_1);
-   double y_2 = mathFunction(x_2);
-   
-
+   double yMin = std::numeric_limits<double>::max();
    std::size_t iterCnt = 0;
    std::vector<double> minYvalues;
-   while (std::abs(right - left) > eps) 
+   double right(xDiap.second), left(xDiap.first);
+   double step = 0.001;
+   double currX = left;
+   double prevY = 0;
+   while (std::abs(yMin - prevY) > eps)
    {
-      if (y_1 < y_2) 
+      while (true)
       {
-         right = x_2;
-         x_2 = x_1;
-         y_2 = y_1;
-         x_1 = left + resphi * (right - left);
-         y_1 = mathFunction(x_1);
-         minYvalues.push_back(y_1);
-      } 
-      else 
-      {
-         left = x_1;
-         x_1 = x_2;
-         y_1 = y_2;
-         x_2 = right - resphi * (right - left);
-         y_2 = mathFunction(x_2);
-         minYvalues.push_back(y_2);
+         ++iterCnt;
+         const double tmpYmin = mathFunction(currX);
+         if(tmpYmin <= yMin)
+         {
+            prevY = yMin;
+            yMin = tmpYmin;
+            minYvalues.push_back(yMin);
+         }
+         else 
+         { 
+            break;
+         }
+         currX += step;
       }
-      iterCnt++;
+      step = (-step) / 4;
+      currX += step;
    }
+   
 
-   const double xMin = (right + left) / static_cast<double>(2);
-   double yMin = mathFunction(xMin);
+   const double xMin = currX;
+   yMin = mathFunction(xMin);
 
    std::cout << "Iteration count: " << iterCnt << std::endl;
    std::cout << "Min point coordinates (x_min,y_min) = (" << std::setprecision(20) << xMin << "," << std::setprecision(20) << yMin << ")" << std::endl; 

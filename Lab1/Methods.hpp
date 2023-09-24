@@ -61,10 +61,10 @@ class GoldenSection  : public MinCalculator
    GetMin() const override final;
 };
 
-class GoldenSectionBinary  : public MinCalculator
+class Bitwise  : public MinCalculator
 {
    public:
-   GoldenSectionBinary(const MathFunction F, const CoordinateDiap& Diap, double Eps) : MinCalculator(F, Diap, Eps) {}
+   Bitwise(const MathFunction F, const CoordinateDiap& Diap, double Eps) : MinCalculator(F, Diap, Eps) {}
 
    virtual
    double
