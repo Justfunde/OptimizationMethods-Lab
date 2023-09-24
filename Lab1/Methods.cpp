@@ -1,5 +1,6 @@
 #include <numeric>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 
 #include "Methods.hpp"
@@ -22,24 +23,35 @@ union double_cast
 double
 BruteForce::GetMin() const
 {
-   double min = std::numeric_limits<double>::max();
+   double yMin = std::numeric_limits<double>::max();
+   double xMin = 0;
+   std::size_t iterCnt = 0;
 
    for(double d = xDiap.first; d <= xDiap.second; d += 0.0001)
    {
       const double tmpMin = mathFunction(d);
-      if(tmpMin <  min) { min = tmpMin;}
+      if(tmpMin <  yMin) 
+      { 
+         yMin = tmpMin;
+         xMin = d;
+      }
+      iterCnt++;
    }
+   std::cout << "Iteration count: " << iterCnt << std::endl;
+   std::cout << "Min point coordinates (x_min,y_min) = (" << std::setprecision(20) <<  xMin << "," << std::setprecision(20) <<  yMin << ")" << std::endl; 
 
-   return min;
+   return yMin;
 }
 
 double
 Dichotomy::GetMin() const
 {
-   double min = std::numeric_limits<double>::max();
+   double yMin = std::numeric_limits<double>::max();
 
    double right(xDiap.second), left(xDiap.first);
 
+   std::size_t iterCnt = 0;
+   std::vector<double> minYvalues;
    while(std::abs(right - left) > eps)
    {
       const double mid = (right + left) / static_cast<double>(2);
@@ -49,25 +61,42 @@ Dichotomy::GetMin() const
       if(lhsVal < rhsVal)
       {
          right = mid;
+         minYvalues.push_back(lhsVal);
       }
       else 
       { 
          left = mid;
+         minYvalues.push_back(rhsVal);
       }
-
+      iterCnt++;
    }
-   min = mathFunction((right + left) / static_cast<double>(2));
+   const double xMin = (right + left) / static_cast<double>(2);
+   yMin = mathFunction(xMin);
 
-   return min;
+   std::cout << "Iteration count: " << iterCnt << std::endl;
+   std::cout << "Min point coordinates (x_min,y_min) = (" << std::setprecision(20) << xMin << "," << std::setprecision(20) << yMin << ")" << std::endl; 
+   std::cout << "Min values on last 3 iterations [";
+   for(std::size_t i = minYvalues.size() - 3; i < minYvalues.size(); ++i)
+   {
+      std::cout << std::setprecision(20) << minYvalues[i];
+      if(i != minYvalues.size() - 1) { std::cout << ", ";}
+   }
+   std::cout << "]" << std::endl;
+
+
+   return yMin;
 }
 
 double
 GoldenSection::GetMin() const
 {
-   double min = std::numeric_limits<double>::max();
+   double yMin = std::numeric_limits<double>::max();
    double right(xDiap.second), left(xDiap.first);
 
    static const double fi = (static_cast<double>(1) + sqrt(5)) / static_cast<double>(2);
+
+   std::size_t iterCnt = 0;
+   std::vector<double> minYvalues;
 
    while(std::abs(right - left) > eps)
    {
@@ -78,51 +107,80 @@ GoldenSection::GetMin() const
       if(y_1 < y_2)
       {
          right = x_2;
+         minYvalues.push_back(y_1);
       }
       else
       {
          left = x_1;
+         minYvalues.push_back(y_2);
       }
+      iterCnt++;
    }
+   const double xMin = (right + left) / static_cast<double>(2);
+   yMin = mathFunction(xMin);
 
-   min = mathFunction((right + left) / static_cast<double>(2));
+   std::cout << "Iteration count: " << iterCnt << std::endl;
+   std::cout << "Min point coordinates (x_min,y_min) = (" << std::setprecision(20) << xMin << "," << std::setprecision(20) << yMin << ")" << std::endl; 
+   std::cout << "Min values on last 3 iterations [";
+   for(std::size_t i = minYvalues.size() - 3; i < minYvalues.size(); ++i)
+   {
+      std::cout << std::setprecision(20) << minYvalues[i];
+      if(i != minYvalues.size() - 1) { std::cout << ", ";}
+   }
+   std::cout << "]" << std::endl;
 
-   return min;
+   return yMin;
 }
 
 double
-BitwiseSearch::GetMin() const
+GoldenSectionBinary::GetMin() const
 {
    static const double fi = (static_cast<double>(1) + sqrt(5)) / static_cast<double>(2);
-   double r(xDiap.second), l(xDiap.first);
+   double right(xDiap.second), left(xDiap.first);
    double resphi = 2 - fi;
-   double x1 = l + resphi * (r - l);
-   double x2 = r - resphi * (r - l);
-   double f1 = mathFunction(x1);
-   double f2 = mathFunction(x2);
+   double x_1 = left + resphi * (right - left);
+   double x_2 = right - resphi * (right - left);
+   double y_1 = mathFunction(x_1);
+   double y_2 = mathFunction(x_2);
    
 
-   while (std::abs(r - l) > eps) 
+   std::size_t iterCnt = 0;
+   std::vector<double> minYvalues;
+   while (std::abs(right - left) > eps) 
    {
-      if (f1 < f2) 
+      if (y_1 < y_2) 
       {
-         r = x2;
-         x2 = x1;
-         f2 = f1;
-         x1 = l + resphi * (r - l);
-         f1 = mathFunction(x1);
+         right = x_2;
+         x_2 = x_1;
+         y_2 = y_1;
+         x_1 = left + resphi * (right - left);
+         y_1 = mathFunction(x_1);
+         minYvalues.push_back(y_1);
       } 
       else 
       {
-         l = x1;
-         x1 = x2;
-         f1 = f2;
-         x2 = r - resphi * (r - l);
-         f2 = mathFunction(x2);
+         left = x_1;
+         x_1 = x_2;
+         y_1 = y_2;
+         x_2 = right - resphi * (right - left);
+         y_2 = mathFunction(x_2);
+         minYvalues.push_back(y_2);
       }
+      iterCnt++;
    }
 
-   double min = mathFunction((r + l) / static_cast<double>(2));
+   const double xMin = (right + left) / static_cast<double>(2);
+   double yMin = mathFunction(xMin);
 
-   return min;
+   std::cout << "Iteration count: " << iterCnt << std::endl;
+   std::cout << "Min point coordinates (x_min,y_min) = (" << std::setprecision(20) << xMin << "," << std::setprecision(20) << yMin << ")" << std::endl; 
+   std::cout << "Min values on last 3 iterations [";
+   for(std::size_t i = minYvalues.size() - 3; i < minYvalues.size(); ++i)
+   {
+      std::cout << std::setprecision(20) << minYvalues[i];
+      if(i != minYvalues.size() - 1) { std::cout << ", ";}
+   }
+   std::cout << "]" << std::endl;
+
+   return yMin;
 }
