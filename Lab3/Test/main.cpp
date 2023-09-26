@@ -10,7 +10,7 @@
 #include "Methods.hpp"
 
 constexpr double eps = 0.1;
-constexpr double etalonMin = -4.82057;
+constexpr double etalonMin = -10.7824;
 
 constexpr double a = 7.15;
 constexpr double b = 13.2;
@@ -49,22 +49,19 @@ void hessian(double& dxx, double& dxy, double& dyx, double& dyy) {
 TEST(MinFunctionCalcTest_GradDescent, GradDescent_Method)
 {
    GradientDescentMethod gdm(f,dx,dy,initP, eps);
-   gdm.GetMin();
-   //EXPECT_NEAR(etalonMin, gdm.GetMin(), eps);
+   EXPECT_NEAR(etalonMin, gdm.GetMin(), eps);
 }
 
 TEST(MinFunctionCalcTest_Newton, Newton_SecMethod)
 {
    NewtonMethod newton(f,dx,dy, hessian, initP, eps);
-   newton.GetMin();
-  // EXPECT_NEAR(etalonMin, newton.GetMin(), eps);
+   EXPECT_NEAR(etalonMin, newton.GetMin(), eps);
 }
 
 TEST(MinFunctionCalcTest_FastGradDescent, FastGradDescent_Method)
 {
    FastestGradientDescentMethod gdm(f,dx,dy,initP, eps);
-   gdm.GetMin();
-   //EXPECT_NEAR(etalonMin, gdm.GetMin(), eps);
+   EXPECT_NEAR(etalonMin, gdm.GetMin(), eps);
 }
 
 int32_t main(int32_t argc, char** argv)
