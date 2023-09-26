@@ -45,3 +45,4 @@ endfunction()
 
 set(SHARED_INCLUDE_DIRS libs/googletest)
 add_subdirectory(Lab1)
+add_subdirectory(Lab2)
