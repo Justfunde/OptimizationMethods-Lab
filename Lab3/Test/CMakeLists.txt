@@ -1,0 +1,11 @@
+set(TARGET_NAME Lab3)
+
+file(GLOB_RECURSE TEST_SRCS ${CMAKE_CURRENT_LIST_DIR} *.cpp *.c)
+file(GLOB_RECURSE TEST_HDRS ${CMAKE_CURRENT_LIST_DIR} *.hpp *.h)
+
+add_executable(${TARGET_NAME} ${SRCS} ${TEST_SRCS}  ${HDRS} ${TEST_HDRS})
+target_include_directories(${TARGET_NAME} PRIVATE ${HEADERS_DIR} ${SHARED_INCLUDE_DIRS})
+target_link_libraries(${TARGET_NAME} PUBLIC ${GTEST_LIBRARIES} )
+
+include(GoogleTest)
+gtest_discover_tests(${TARGET_NAME})

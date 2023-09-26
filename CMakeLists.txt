@@ -17,12 +17,6 @@ set(OUTPUT_RELEASE_DIR "${CMAKE_CURRENT_LIST_DIR}/Release")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(PROJECT_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:\\qt\\5.12.12\\mingw73_64\\")
-
-find_package(Boost REQUIRED)
-if(Boost_FOUND)
-     include_directories(${Boost_INCLUDE_DIRS})
-endif()
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -46,3 +40,4 @@ endfunction()
 set(SHARED_INCLUDE_DIRS libs/googletest)
 add_subdirectory(Lab1)
 add_subdirectory(Lab2)
+add_subdirectory(Lab3)
